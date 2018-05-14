@@ -8,8 +8,9 @@ namespace TreasureHuntBot
 {
     public partial class MainScreen : Form
     {
-        Reddit reddit;
-        int messageCount = 0;
+        private Reddit reddit;
+        private int messageCount = 0;
+
         public MainScreen()
         {
             InitializeComponent();
@@ -26,15 +27,14 @@ namespace TreasureHuntBot
             try
             {
                 reddit = new Reddit(Properties.Settings.Default.RedditAccountName, Properties.Settings.Default.RedditAccountPassword);
-                lRedditName.Text = "Logged in as "+reddit.User.Name;
+                lRedditName.Text = "Logged in as " + reddit.User.Name;
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("Error while trying to login. Is your user/pass correct?", "Error", MessageBoxButtons.OK);
                 return false;
             }
-            
         }
 
         private void btStart_Click(object sender, EventArgs e)
@@ -46,9 +46,7 @@ namespace TreasureHuntBot
                     backgroundWorker1.RunWorkerAsync();
                     labelBotStatus.Text = "The Bot is now running!!!";
                 }
-                    
             }
-                
             else
             {
                 var result = MessageBox.Show("The worker is already running!\nAsk the bot to stop reading messages? May take up to 2 minutes.",
@@ -67,7 +65,7 @@ namespace TreasureHuntBot
                 {
                     foreach (PrivateMessage message in reddit.User.UnreadMessages)
                     {
-                        if (message.Unread && message.Subject.ToLower().Contains(Properties.Settings.Default.TitleKeyword.ToLower()) 
+                        if (message.Unread && message.Subject.ToLower().Contains(Properties.Settings.Default.TitleKeyword.ToLower())
                             && message.Body.ToLower().Contains(Properties.Settings.Default.BodyKeyword.ToLower()))
                         {
                             message.Reply(Properties.Settings.Default.Response);
@@ -75,11 +73,9 @@ namespace TreasureHuntBot
                             backgroundWorker1.ReportProgress(0, messageCount + 1);
                             saveToLog(message.Author, message.SentUTC);
                         }
-                        
                     }
-                    Thread.Sleep(1000*60*2);//Sleep for 2 minutes
+                    Thread.Sleep(1000 * 60 * 2);//Sleep for 2 minutes
                 }
-
             }
         }
 
